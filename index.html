@@ -238,7 +238,7 @@
         return observationDateValue(b).localeCompare(observationDateValue(a));
       });
       var panel = panels.filter(function (item) {
-        return Array.isArray(item.component) && item.component.length > 0;
+        return componentForCode(item, "8480-6") || componentForCode(item, "8462-4");
       })[0];
       var systolic = panel ? componentForCode(panel, "8480-6") : null;
       var diastolic = panel ? componentForCode(panel, "8462-4") : null;
