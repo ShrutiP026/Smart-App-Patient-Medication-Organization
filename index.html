@@ -244,21 +244,36 @@
       var diastolic = panel ? componentForCode(panel, "8462-4") : null;
       var systolicSource = systolic ? panel : latestForCode(observations, "8480-6");
       var diastolicSource = diastolic ? panel : latestForCode(observations, "8462-4");
-      var systolicValue = systolic && systolic.valueQuantity
-        ? formatQuantity(systolic.valueQuantity)
-        : quantityFromObservation(systolicSource);
-      var diastolicValue = diastolic && diastolic.valueQuantity
-        ? formatQuantity(diastolic.valueQuantity)
-        : quantityFromObservation(diastolicSource);
+      var systolicQuantity = systolic && systolic.valueQuantity
+        ? systolic.valueQuantity
+        : systolicSource && systolicSource.valueQuantity;
+      var diastolicQuantity = diastolic && diastolic.valueQuantity
+        ? diastolic.valueQuantity
+        : diastolicSource && diastolicSource.valueQuantity;
+      var systolicValue = formatBloodPressureValue(systolicQuantity);
+      var diastolicValue = formatBloodPressureValue(diastolicQuantity);
       var sources = [systolicSource, diastolicSource].filter(Boolean).sort(function (a, b) {
         return observationDateValue(b).localeCompare(observationDateValue(a));
       });
       var source = sources[0] || null;
 
+      var value = systolicValue === "Not recorded" && diastolicValue === "Not recorded"
+        ? "Not recorded"
+        : systolicValue + "/" + diastolicValue + " mm[Hg]";
+
       return {
-        value: systolicValue + " / " + diastolicValue,
+        value: value,
         date: source ? observationDateValue(source) : ""
       };
+    }
+
+    // This reads valueQuantity.value for a blood pressure component or separate
+    // observation and rounds it for the student to see 86/73 mm[Hg].
+    function formatBloodPressureValue(quantity) {
+      if (!quantity || quantity.value === undefined || quantity.value === null) {
+        return "Not recorded";
+      }
+      return Number(quantity.value).toFixed(1).replace(/\.0$/, "");
     }
 
     // This finds a component with the requested code and reads its valueQuantity;
