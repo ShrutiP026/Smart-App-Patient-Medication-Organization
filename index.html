@@ -54,7 +54,8 @@
       </ul>
     </section>
 
-    <p id="loading" class="status" role="status" hidden>Loading your patient record…</p>
+    <p id="loading" class="status" role="status">Checking your sign-in and loading your patient record…</p>
+    <p id="record-error" class="status error" role="alert" hidden></p>
 
     <div id="record" hidden>
       <section aria-labelledby="identity-heading">
@@ -171,7 +172,9 @@
     // This puts a plain-language error on the page; the student should see what
     // failed instead of an empty or blank record screen.
     function showError(message) {
-      showObservationError(message);
+      var node = document.getElementById("record-error");
+      node.textContent = message;
+      node.hidden = false;
     }
 
     // This displays an Observation search error without clearing identity; the
