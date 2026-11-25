@@ -193,9 +193,9 @@
       var latestHdl = latestForCode(observations, "2085-9");
       var latestLdl = latestForCode(observations, "13457-7");
 
-      setResult("height", latestHeight);
-      setResult("hdl", latestHdl);
-      setResult("ldl", latestLdl);
+      setResult("height", latestHeight, false);
+      setResult("hdl", latestHdl, true);
+      setResult("ldl", latestLdl, true);
 
       var bloodPressure = getBloodPressure(observations);
       document.getElementById("blood-pressure-value").textContent = bloodPressure.value;
@@ -281,23 +281,23 @@
         : "Not recorded";
     }
 
-    // This formats valueQuantity.value with unit (or code) and handles missing
-    // fields; the student should see the measurement and its unit together.
+    // This formats valueQuantity.value to one decimal place with its unit (or code);
+    // the student should see consistent Height, Blood pressure, HDL, and LDL values.
     function formatQuantity(quantity) {
       if (!quantity || quantity.value === undefined || quantity.value === null) {
         return "Not recorded";
       }
       var unit = quantity.unit || quantity.code || "";
-      return String(quantity.value) + (unit ? " " + unit : "");
+      return Number(quantity.value).toFixed(1) + (unit ? " " + unit : "");
     }
 
-    // This fills one result row from an Observation's valueQuantity and result
-    // date; the student should see Not recorded when no matching result exists.
-    function setResult(prefix, observation) {
+    // This fills one result row from an Observation's valueQuantity and optional date;
+    // the student should see a one-decimal result and a date only when requested.
+    function setResult(prefix, observation, showResultDate) {
       document.getElementById(prefix + "-value").textContent = observation
         ? quantityFromObservation(observation)
         : "Not recorded";
-      setDate(prefix + "-date", observation ? observationDateValue(observation) : "");
+      setDate(prefix + "-date", showResultDate && observation ? observationDateValue(observation) : "");
     }
 
     // This shows an Observation date when present; the student should see the
