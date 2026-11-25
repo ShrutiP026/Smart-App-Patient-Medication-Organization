@@ -247,7 +247,10 @@
       var diastolicValue = diastolic && diastolic.valueQuantity
         ? formatQuantity(diastolic.valueQuantity)
         : quantityFromObservation(diastolicSource);
-      var source = panel || systolicSource || diastolicSource;
+      var sources = [systolicSource, diastolicSource].filter(Boolean).sort(function (a, b) {
+        return observationDateValue(b).localeCompare(observationDateValue(a));
+      });
+      var source = sources[0] || null;
 
       return {
         value: systolicValue + " / " + diastolicValue,
